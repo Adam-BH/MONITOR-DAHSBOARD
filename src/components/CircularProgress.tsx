@@ -17,6 +17,7 @@ export default function CircularProgress({
 	showControls = false,
 	status,
 	onValueChange,
+	decimalPlaces = 0,
 }: CircularProgressProps) {
 	const radius = (size - strokeWidth) / 2;
 	const circumference = radius * 2 * Math.PI;
@@ -41,7 +42,7 @@ export default function CircularProgress({
 		let newPercentage = ((angle + Math.PI / 2) / (2 * Math.PI)) * 100;
 		if (newPercentage < 0) newPercentage += 100;
 
-		onValueChange(Math.round(newPercentage));
+		onValueChange(Number(newPercentage.toFixed(decimalPlaces)));
 	};
 
 	return (
@@ -77,14 +78,15 @@ export default function CircularProgress({
 				{showControls ? (
 					<input
 						type="number"
-						value={Math.round(percentage)}
+						value={percentage.toFixed(decimalPlaces)}
 						onChange={(e) => onValueChange?.(Number(e.target.value))}
-						className="w-20 text-center bg-transparent"
+						className="w-24 text-center bg-transparent"
 						min="0"
 						max="100"
+						step="0.1"
 					/>
 				) : (
-					`${Math.round(percentage)}%`
+					`${percentage.toFixed(decimalPlaces)}%`
 				)}
 			</div>
 		</div>

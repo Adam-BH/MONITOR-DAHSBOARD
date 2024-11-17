@@ -8,11 +8,15 @@ import {
 	BarChart3,
 	Bell,
 	Settings,
+	RefreshCw,
+	CircularProgress,
 } from 'lucide-react';
 import ProcessCard from './components/ProcessCard';
 import WarningModal from './components/WarningModal';
 import { ProcessVariable, AlarmState } from './types/process';
 import RegenerationCard from './components/RegenerationCard';
+import AlertBanner from './components/AlertBanner';
+import { cn } from './utils/cn';
 
 function App() {
 	const [showWarnings, setShowWarnings] = useState(false);
@@ -126,14 +130,8 @@ function App() {
 		return processVariables
 			.filter((variable) => variable.status !== 'normal')
 			.map((variable) => ({
-				message: `${variable.title}: ${variable.value.toFixed(2)} ${
+				message: `${variable.title}: ${variable.value.toFixed(1)} ${
 					variable.unit
-				} - ${
-					variable.status === 'emergency'
-						? '⚠️ IMMEDIATE ACTION REQUIRED'
-						: variable.status === 'critical'
-						? 'Critical threshold exceeded'
-						: 'Outside normal range'
 				}`,
 				status: variable.status,
 			}));
@@ -143,24 +141,24 @@ function App() {
 		<div className="min-h-screen bg-gray-50">
 			<div className="container mx-auto px-4 py-8">
 				<div className="flex justify-between items-center mb-8">
-					<h1 className="text-3xl font-bold text-gray-900">Process Monitor</h1>
+					<h1 className="text-2xl font-bold text-gray-800">Process Monitor</h1>
 					<div className="flex gap-4">
 						<button
-							onClick={() => setShowControls(!showControls)}
-							className="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+							onClick={() => setShowWarnings(true)}
+							className="p-2 rounded-lg hover:bg-gray-100"
 						>
-							<Settings className="h-5 w-5" />
-							{showControls ? 'Hide Controls' : 'Show Controls'}
+							<Bell className="h-6 w-6 text-gray-600" />
 						</button>
 						<button
-							onClick={() => setShowWarnings(true)}
-							className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+							onClick={() => setShowControls(!showControls)}
+							className="p-2 rounded-lg hover:bg-gray-100"
 						>
-							<Bell className="h-5 w-5" />
-							View Alerts
+							<Settings className="h-6 w-6 text-gray-600" />
 						</button>
 					</div>
 				</div>
+
+				<AlertBanner warnings={getWarnings()} />
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 					<div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,7 +172,7 @@ function App() {
 							/>
 						))}
 					</div>
-					<div className="h-fit">
+					<div className="h-full">
 						<RegenerationCard
 							{...regeneration}
 							showControls={showControls}
