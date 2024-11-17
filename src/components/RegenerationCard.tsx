@@ -1,35 +1,26 @@
 import React from 'react';
 import { AlarmState } from '../types/process';
 import { cn } from '../utils/cn';
+import CircularProgress from './CircularProgress';
+import { RefreshCw } from 'lucide-react';
 
-interface ProcessCardProps {
+interface RegenerationCardProps {
 	title: string;
-	value: number;
-	unit: string;
-	icon: React.ReactNode;
+	percentage: number;
 	status: AlarmState;
 	showControls: boolean;
 	onStatusChange: (status: AlarmState) => void;
-	onValueChange: (value: number) => void;
+	onPercentageChange: (value: number) => void;
 }
 
-export default function ProcessCard({
+export default function RegenerationCard({
 	title,
-	value,
-	unit,
-	icon,
+	percentage,
 	status,
 	showControls,
 	onStatusChange,
-	onValueChange,
-}: ProcessCardProps) {
-	const statusColors = {
-		normal: 'bg-green-100 text-green-800 border-green-200',
-		warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-		critical: 'bg-orange-100 text-orange-800 border-orange-200',
-		emergency: 'bg-red-100 text-red-800 border-red-200',
-	};
-
+	onPercentageChange,
+}: RegenerationCardProps) {
 	const cardColors = {
 		normal: 'border-green-100',
 		warning: 'border-yellow-100',
@@ -51,37 +42,24 @@ export default function ProcessCard({
 				cardColors[status]
 			)}
 		>
-			<div className="flex items-center justify-between mb-4">
-				<div className="text-gray-600">{icon}</div>
-				<div
-					className={cn(
-						'px-3 py-1 rounded-full text-sm font-medium border',
-						statusColors[status]
-					)}
-				>
-					{status.charAt(0).toUpperCase() + status.slice(1)}
-				</div>
+			<div className="flex items-center gap-3 mb-6">
+				<RefreshCw className="h-6 w-6 text-gray-600" />
+				<h3 className="text-xl font-semibold text-gray-800">{title}</h3>
 			</div>
 
-			<h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-
-			<div className="flex items-center gap-2 mb-4">
-				{showControls ? (
-					<input
-						type="number"
-						value={value}
-						onChange={(e) => onValueChange(parseFloat(e.target.value))}
-						className="w-24 px-2 py-1 border rounded-md"
-						step="0.1"
-					/>
-				) : (
-					<span className="text-xl font-medium">{value.toFixed(1)}</span>
-				)}
-				<span className="text-gray-500">{unit}</span>
+			<div className="flex items-center justify-center py-4">
+				<CircularProgress
+					percentage={percentage}
+					status={status}
+					showControls={showControls}
+					onValueChange={onPercentageChange}
+					size={160}
+					strokeWidth={10}
+				/>
 			</div>
 
 			{showControls && (
-				<div className="grid grid-cols-2 gap-2">
+				<div className="grid grid-cols-2 gap-2 mt-6">
 					{statusButtons.map((statusOption) => (
 						<button
 							key={statusOption}
